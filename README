@@ -1,4 +1,0 @@
-This is supposed to become a little plugin for the BabasChess client [1] to be run on FICS [2]. Its sole purpose is to move the interaction with the relay bot away from the console and into the Info Window.
-
-[1] http://www.babaschess.net
-[2] http://www.freechess.org
