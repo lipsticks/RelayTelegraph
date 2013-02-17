@@ -1,0 +1,1 @@
+This is the BabasChess [Plugin SDK](http://www.babaschess.net/download.asp).
