@@ -1,5 +1,8 @@
 #include "../modules/extern/sdk/BabasChessPlugin.h"
 #include <stdio.h>
+#include "../modules/lib/win/win.h"
+#include "../controls/mainPane/mainPane.h"
+#include "resource.h"
 
 // ------------------------------------------------------------
 // Global variables
@@ -8,6 +11,11 @@
 
 BABASCHESS_DISPATCH_V_1_4 *pBCDT = NULL;
 DWORD dwMyID = 0;
+// {D287E188-31BF-4c52-8370-40B00BEE4A3B}
+static const GUID MainPaneGUID = 
+{ 0xd287e188, 0x31bf, 0x4c52, { 0x83, 0x70, 0x40, 0xb0, 0xb, 0xee, 0x4a, 0x3b } };
+const char MainPaneTabTitle[]="RelayTelegraph";
+
 
 void Out(const char * format, ...) {
 	char buffer[1024];
@@ -111,11 +119,20 @@ BCPEXP void _cdecl BCP_OnRatingChange(const char *strRatingType,DWORD nOldRating
 }
 
 BCPEXP BOOL _cdecl BCP_EnumInfoTabGUIDs(int index,GUID *pGUID,const char **strTitle,HBITMAP *pHBmp) {
+	if(0==index) {
+		*pGUID = MainPaneGUID;
+		*strTitle = MainPaneTabTitle;
+		const HINSTANCE instance = GetModuleHandle(NULL);
+		*pHBmp = LoadBitmap(instance, MAKEINTRESOURCE(IDB_TABICON));
+		return TRUE;
+	}
 	return FALSE;
 }
 
 BCPEXP HWND _cdecl BCP_CreateInfoTabWindow(const GUID *pGUID,HWND hWndParent) {
-	return NULL;
+	static lib::win::WindowClass wcmw("MAIN_PANE_CLASS", MainPaneProc);
+	lib::win::WindowHandle hwnd;
+	hwnd.Create("MAIN_PANE_CLASS", hWndParent, 1001);
+	//lib::win::debug::out("%08X", (HWND)hwnd);
+	return hwnd.Detach();
 }
-
-

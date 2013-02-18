@@ -1,0 +1,1 @@
+#define ID_ICO_APPLICATION	10001
