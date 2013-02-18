@@ -161,3 +161,23 @@ void lib::win::debug::out(const char * format, ...) {
 	OutputDebugString(buffer);
 }
 
+void lib::win::debug::printError(DWORD error) {
+	LPVOID lpMsgBuf = NULL;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		error,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		reinterpret_cast<LPTSTR>(&lpMsgBuf),
+		0,
+		NULL
+	);
+	OutputDebugString(static_cast<LPTSTR>(lpMsgBuf));
+	LocalFree(lpMsgBuf);
+}
+
+void lib::win::debug::printError() {
+	lib::win::debug::printError(GetLastError());
+}

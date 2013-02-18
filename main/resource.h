@@ -1,1 +1,1 @@
-#define IDB_TABICON	10001
+#define IDB_TABICON	101

@@ -11,31 +11,18 @@
 
 BABASCHESS_DISPATCH_V_1_4 *pBCDT = NULL;
 DWORD dwMyID = 0;
-// {D287E188-31BF-4c52-8370-40B00BEE4A3B}
-static const GUID MainPaneGUID = 
-{ 0xd287e188, 0x31bf, 0x4c52, { 0x83, 0x70, 0x40, 0xb0, 0xb, 0xee, 0x4a, 0x3b } };
+static const GUID MainPaneGUID = { 0xd287e188, 0x31bf, 0x4c52, { 0x83, 0x70, 0x40, 0xb0, 0xb, 0xee, 0x4a, 0x3b } }; // {D287E188-31BF-4c52-8370-40B00BEE4A3B}
 const char MainPaneTabTitle[]="RelayTelegraph";
 
 
-void Out(const char * format, ...) {
-	char buffer[1024];
-	va_list args;
-	va_start(args, format);
-	vsprintf(buffer, format, args);
-	va_end(args);
-	OutputDebugString(buffer);
-}
-
-
 BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD reason, LPVOID) {
-	switch(reason)
-	{
-	case DLL_PROCESS_ATTACH:
-		DisableThreadLibraryCalls(hInstance);
-		break;
-	
-	case DLL_PROCESS_DETACH:
-		break;
+	//NOTE: Apparently this is never called.
+	switch(reason) {
+		case DLL_PROCESS_ATTACH:
+			DisableThreadLibraryCalls(hInstance);
+			break;
+		case DLL_PROCESS_DETACH:
+			break;
 	}
 	return TRUE;
 }
@@ -63,7 +50,7 @@ BCPEXP void _cdecl BCP_GetDispatchTable(void *pTable) {
 BCPEXP void _cdecl BCP_SetMenu(DWORD *nMenuItems,const char ***strItems) {
 	static const char *items[] = {
 		"&Test",
-		"&About..."
+		"&About...",
 	};
 
 	*strItems = items;
@@ -77,7 +64,7 @@ BCPEXP BOOL _cdecl BCP_OnUpdateMenuStatus(DWORD nItem,BOOL *bChecked) {
 BCPEXP void _cdecl BCP_OnMenuItem(DWORD nItem) {
 	switch(nItem) {
 		case 0:
-			OutputDebugString("hello!");
+			lib::win::debug::out("hello!");
 			break;
 		
 		case 1:
@@ -96,7 +83,7 @@ BCPEXP void _cdecl BCP_OnTimer() {
 }
 
 BCPEXP BOOL _cdecl BCP_OnQTell(ServerOuputQTellType soq,const char *line) {
-	Out("QTELL: %s", line);
+	lib::win::debug::out("QTELL: %s", line);
 	return TRUE;
 }
 
@@ -122,8 +109,14 @@ BCPEXP BOOL _cdecl BCP_EnumInfoTabGUIDs(int index,GUID *pGUID,const char **strTi
 	if(0==index) {
 		*pGUID = MainPaneGUID;
 		*strTitle = MainPaneTabTitle;
-		const HINSTANCE instance = GetModuleHandle(NULL);
+		//const HINSTANCE instance = GetModuleHandle(NULL);
+		const HINSTANCE instance = GetModuleHandle("RelayTelegraph.BCPlugin");
+		lib::win::debug::out("HINSTANCE: %08X", instance);
 		*pHBmp = LoadBitmap(instance, MAKEINTRESOURCE(IDB_TABICON));
+		if(!*pHBmp) {
+			lib::win::debug::out("RelayTelegraph: error while loading tab icon");
+			lib::win::debug::printError();
+		}
 		return TRUE;
 	}
 	return FALSE;
@@ -133,6 +126,5 @@ BCPEXP HWND _cdecl BCP_CreateInfoTabWindow(const GUID *pGUID,HWND hWndParent) {
 	static lib::win::WindowClass wcmw("MAIN_PANE_CLASS", MainPaneProc);
 	lib::win::WindowHandle hwnd;
 	hwnd.Create("MAIN_PANE_CLASS", hWndParent, 1001);
-	//lib::win::debug::out("%08X", (HWND)hwnd);
 	return hwnd.Detach();
 }

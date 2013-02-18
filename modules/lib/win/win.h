@@ -81,6 +81,9 @@ namespace debug {
 
 void out(const char * format, ...);
 
+void printError(DWORD error);
+void printError();
+
 } // namespace debug
 
 } //namespace win
