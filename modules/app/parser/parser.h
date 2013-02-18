@@ -47,6 +47,12 @@ public:
 };
 
 
+//NOTE: This was supposed to be a kind of common denominator and a means to
+//  correlate the tourney entries between the two different listings ('tell
+//  relay listTourney' and 'tell relayInfo show'). However, it turns out that
+//  the names aren't guaranteed to be identical between the two lists. If it
+//  had only been a truncating, the partial matching should have worked, but
+//  it seems that some names will get abbreviated (e.g. by dropping the vowels).
 class TourneyId {
 public:
 	std::string name;

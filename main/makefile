@@ -1,4 +1,4 @@
-RelayTelegraph.BCPlugin: RelayTelegraph.cpp
+RelayTelegraph.BCPlugin: main.cpp
 	@g++ --shared -o $@ $^
 
 clean:

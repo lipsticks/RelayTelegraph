@@ -1,4 +1,4 @@
-#include "lib/BabasChessPlugin.h"
+#include "../modules/extern/sdk/BabasChessPlugin.h"
 #include <stdio.h>
 
 // ------------------------------------------------------------
