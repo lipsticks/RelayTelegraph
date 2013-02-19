@@ -4,6 +4,9 @@
 #include <string.h>
 #include "../../lib/date/date.h"
 
+//NOTE: Maybe we would have simplified things by adding toGmtStamp() and toGmtDate() methods.
+//TODO: Add operator<<()'s where absent.
+
 namespace app {
 
 namespace date {
@@ -37,13 +40,27 @@ class ServerDate : public Date {
 public:
 	ServerDate(const Date& d);
 	ServerDate(const LocalDate& d);
+	ServerDate(const ServerDate& d);
 };
 
 class LocalDate : public Date {
 public:
 	LocalDate();
 	LocalDate(const Date& d);
+	LocalDate(const LocalDate& d);
 	LocalDate(const ServerDate& d);
+};
+
+class AdjustedDate : public Date {
+private:
+	int offset;
+public:
+	AdjustedDate(int offset=0);
+public:
+	AdjustedDate& operator<<(const Date& d);
+	AdjustedDate& operator<<(const LocalDate& d);
+	AdjustedDate& operator<<(const ServerDate& d);
+	AdjustedDate& operator<<(const AdjustedDate& d);
 };
 
 } //namespace date
