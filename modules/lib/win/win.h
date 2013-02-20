@@ -29,6 +29,8 @@
 
 EXCEPTION_BASE(std::runtime_error, WinError)
 
+enum {INVALID_ITEM=-1, INVALID_ID=0};
+
 namespace lib {
 
 namespace win {
@@ -41,9 +43,20 @@ BOOL UnregisterWindowClass(const WNDCLASSEX &wc);
 
 HWND InstantiateWindowClass(const WNDCLASSEX &wc, LPCSTR title, DWORD style=WS_OVERLAPPEDWINDOW, DWORD stylex=0, int x=CW_USEDEFAULT, int y=CW_USEDEFAULT, int w=400, int h=300);
 
+WNDPROC SubclassWindow(HWND h, WNDPROC callback, UINT subclassMessage=0);
+
 int EnterMessageLoop();
 
+
+void ModifyWindowStyles(HWND h, DWORD sadd, DWORD sclr=0, DWORD xadd=0, DWORD xclr=0);
+
 void SetWindowSize(HWND h, int cx, int cy);
+
+void SetWindowLocation(HWND h, int x, int y);
+
+UINT GetWindowId(HWND h);
+
+HWND GetRootParent(HWND h);
 
 
 class WindowClass {
@@ -77,6 +90,17 @@ public:
 	HWND Detach();
 };
 
+
+class Font {
+protected:
+	HFONT handle;
+public:
+	Font(bool serif=false, int height=0, bool bold=false, bool proof=false);
+	Font(LPCSTR family, int height=0, bool bold=false, bool proof=false);
+	virtual ~Font();
+	operator HFONT() const;
+};
+
 namespace debug {
 
 void out(const char * format, ...);
@@ -85,6 +109,33 @@ void printError(DWORD error);
 void printError();
 
 } // namespace debug
+
+namespace list {
+
+void SetListFonts(HWND h, HFONT body, HFONT head=NULL, bool redraw=true);
+
+void InsertColumn(HWND h, int col, LPCSTR label, int width=100);
+int GetColumnCount(HWND h);
+int AppendColumn(HWND h, LPCSTR label, int width=100);
+void GrowColumnToFit(HWND h, int growableColumn=0, int visibleColumnCount=0, bool autoResize=true);
+int GetColumnWidth(HWND h, int col=-1);
+
+void InsertItem(HWND h, int row, LPCSTR text="");
+int AppendItem(HWND h, LPCSTR text="");
+bool SetItemData(HWND h, int row, LPARAM data);
+LPARAM GetItemData(HWND h, int row);
+void SetItemText(HWND h, int row, int col, LPCSTR text="");
+bool GetItemText(HWND h, int row, int col, std::string& text, bool autoGrowCapacity=true);
+
+int GetFirstSelectedItem(HWND h);
+bool IsItemSelected(HWND h, int i);
+bool IsItemFocused(HWND h, int i);
+void SetItemSelectionState(HWND h, int i, bool setFocus=true);
+void ToggleItemSelectionState(HWND h, int i);
+void ClearItemSelectionState(HWND h, bool clearFocus=true);
+bool EnsureItemVisible(HWND h, int row);
+
+} // namespace list
 
 } //namespace win
 
