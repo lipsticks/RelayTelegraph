@@ -39,11 +39,14 @@ void testServerDate() {
 void testScheduleParser2() {
 	app::parser::ScheduleParser p;
 	app::parser::ScheduleTableBorderParser e;
-	lib::parser::Splitter s(relayInfoShow);
+	app::parser::ScheduleTableEndParser f;
+	lib::parser::Splitter s(relayInfoShow2);
 	for(int i=0; i<s.count(); ++i) {
 		//printf("%s\n", s[i]);
 		if(e.match(s[i]))
 			printf("### SCHEDULE BORDER\n");
+		if(f.match(s[i]))
+			printf("### END\n");
 		if(p.match(s[i])) {
 			//for(int j=0; j<p.count()-1; ++j)
 			//	printf("[%d] '%s'\n", j, p[j]);
@@ -66,7 +69,7 @@ void testScheduleParser2() {
 
 void testRelayTourneyListParser2() {
 	app::parser::RelayTourneyListParser p;
-	lib::parser::Splitter s(relayListTourney);
+	lib::parser::Splitter s(relayListTourney3);
 	for(int i=0; i<s.count(); ++i) {
 		//printf("%s\n", s[i]);
 		if(p.match(s[i])) {
@@ -81,7 +84,7 @@ void testRelayTourneyListParser2() {
 			app::parser::TourneyStatus ts;
 			ts.load(p);
 			ts.print();
-			printf("\n");
+			printf("\n\n");
 		}
 		else
 			printf("%s\n", s[i]);
@@ -93,7 +96,7 @@ int main() {
 	//testScheduleParser();
 	//testRelayTourneyListParser();
 	//testServerDate();
-	testScheduleParser2();
+	//testScheduleParser2();
 	testRelayTourneyListParser2();
 	return 0;
 }

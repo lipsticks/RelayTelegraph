@@ -24,6 +24,15 @@ public:
 };
 
 
+class ScheduleTableEndParser : public lib::parser::Regex {
+private:
+	static const char * pattern;
+public:
+	ScheduleTableEndParser() : Regex(pattern) {
+	}
+};
+
+
 class RelayTourneyListParser : public lib::parser::Regex {
 private:
 	static const char * pattern;
@@ -55,7 +64,7 @@ public:
 //  it seems that some names will get abbreviated (e.g. by dropping the vowels).
 class TourneyId {
 public:
-	std::string name;
+	std::string name, sround;
 	int round;
 	bool lastRound, tieBreak;
 public:

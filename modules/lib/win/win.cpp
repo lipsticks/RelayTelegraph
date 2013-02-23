@@ -237,11 +237,12 @@ void lib::win::list::SetListFonts(HWND h, HFONT body, HFONT head, bool redraw) {
 	SendMessage(ListView_GetHeader(h), WM_SETFONT, (WPARAM)(HFONT)head, MAKELPARAM((BOOL)redraw, 0));
 }
 
-void lib::win::list::InsertColumn(HWND h, int col, LPCSTR label, int width) {
+void lib::win::list::InsertColumn(HWND h, int col, LPCSTR label, int width, bool right) {
 	LVCOLUMN c;
 	memset(&c, 0, sizeof(c));
-	c.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+	c.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
 	c.cx = width;
+	c.fmt = right ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	c.pszText = const_cast<LPSTR>(label);
 	c.iSubItem = col;
 	ListView_InsertColumn(h, col, &c);
@@ -251,9 +252,9 @@ int lib::win::list::GetColumnCount(HWND h) {
 	return Header_GetItemCount(ListView_GetHeader(h));
 }
 
-int lib::win::list::AppendColumn(HWND h, LPCSTR label, int width) {
+int lib::win::list::AppendColumn(HWND h, LPCSTR label, int width, bool right) {
 	int col = GetColumnCount(h);
-	InsertColumn(h, col, label, width);
+	InsertColumn(h, col, label, width, right);
 	return col;
 }
 

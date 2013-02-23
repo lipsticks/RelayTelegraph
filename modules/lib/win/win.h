@@ -114,9 +114,9 @@ namespace list {
 
 void SetListFonts(HWND h, HFONT body, HFONT head=NULL, bool redraw=true);
 
-void InsertColumn(HWND h, int col, LPCSTR label, int width=100);
+void InsertColumn(HWND h, int col, LPCSTR label, int width=100, bool right=false);
 int GetColumnCount(HWND h);
-int AppendColumn(HWND h, LPCSTR label, int width=100);
+int AppendColumn(HWND h, LPCSTR label, int width=100, bool right=false);
 void GrowColumnToFit(HWND h, int growableColumn=0, int visibleColumnCount=0, bool autoResize=true);
 int GetColumnWidth(HWND h, int col=-1);
 

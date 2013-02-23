@@ -1,6 +1,7 @@
 #include "../modules/extern/sdk/BabasChessPlugin.h"
 #include <stdio.h>
 #include "../modules/lib/win/win.h"
+#include "../modules/app/parser/parser.h"
 #include "../controls/mainPane/mainPane.h"
 #include "resource.h"
 
@@ -14,6 +15,8 @@ DWORD dwMyID = 0;
 static const GUID MainPaneGUID = { 0xd287e188, 0x31bf, 0x4c52, { 0x83, 0x70, 0x40, 0xb0, 0xb, 0xee, 0x4a, 0x3b } }; // {D287E188-31BF-4c52-8370-40B00BEE4A3B}
 const char MainPaneTabTitle[]="RelayTelegraph";
 
+lib::win::WindowClass wcmw("MAIN_PANE_CLASS", MainPaneProc);
+lib::win::WindowHandle hwnd;
 
 BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD reason, LPVOID) {
 	//NOTE: Apparently this is never called.
@@ -74,6 +77,8 @@ BCPEXP void _cdecl BCP_OnMenuItem(DWORD nItem) {
 }
 
 BCPEXP void _cdecl BCP_OnLogOn() {
+	//NOTE: Maybe we should start a timer here to add a short cushioning delay.
+	PostMessage(hwnd, UM_MAINPANE_UPDATE, 0, 0);
 }
 
 BCPEXP void _cdecl BCP_OnLogOff(BOOL bReason) {
@@ -83,7 +88,12 @@ BCPEXP void _cdecl BCP_OnTimer() {
 }
 
 BCPEXP BOOL _cdecl BCP_OnQTell(ServerOuputQTellType soq,const char *line) {
-	lib::win::debug::out("QTELL: %s", line);
+	DWORD qm = 0;
+	qm = SendMessage(hwnd, UM_MAINPANE_GET_QUERYMODE, 0, 0);
+	if(qm) {
+		SendMessage(hwnd, UM_MAINPANE_ADD_QTELL_LINE, 0, (LPARAM)line);
+		return FALSE;
+	}
 	return TRUE;
 }
 
@@ -111,7 +121,7 @@ BCPEXP BOOL _cdecl BCP_EnumInfoTabGUIDs(int index,GUID *pGUID,const char **strTi
 		*strTitle = MainPaneTabTitle;
 		//const HINSTANCE instance = GetModuleHandle(NULL);
 		const HINSTANCE instance = GetModuleHandle("RelayTelegraph.BCPlugin");
-		lib::win::debug::out("HINSTANCE: %08X", instance);
+		//lib::win::debug::out("HINSTANCE: %08X", instance);
 		*pHBmp = LoadBitmap(instance, MAKEINTRESOURCE(IDB_TABICON));
 		if(!*pHBmp) {
 			lib::win::debug::out("RelayTelegraph: error while loading tab icon");
@@ -123,8 +133,7 @@ BCPEXP BOOL _cdecl BCP_EnumInfoTabGUIDs(int index,GUID *pGUID,const char **strTi
 }
 
 BCPEXP HWND _cdecl BCP_CreateInfoTabWindow(const GUID *pGUID,HWND hWndParent) {
-	static lib::win::WindowClass wcmw("MAIN_PANE_CLASS", MainPaneProc);
-	lib::win::WindowHandle hwnd;
 	hwnd.Create("MAIN_PANE_CLASS", hWndParent, 1001);
-	return hwnd.Detach();
+	SendMessage(hwnd, UM_MAINPANE_SET_PLUGIN_PTR, dwMyID, (LPARAM)pBCDT);
+	return (HWND)hwnd;
 }

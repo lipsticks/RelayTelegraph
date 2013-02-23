@@ -1,44 +1,12 @@
 #include "../../../modules/lib/win/win.h"
+#include "../../../modules/app/win/TourneyListView/TourneyListView.h"
 #include "../../../controls/mainPane/mainPane.h"
 #include "resource.h"
-
-class TourneyListView : public lib::win::WindowHandle {
-private:
-	static lib::win::WindowClass wc;
-private:
-	lib::win::Font fontBody, fontHead;
-public:
-	TourneyListView() : fontBody(false, 18), fontHead(false, 12) {
-	}
-public:
-	void Create(HWND parent, UINT id=-1) {
-		lib::win::WindowHandle::Create(WC_LISTVIEW, parent, id, WS_VISIBLE|LVS_REPORT|LVS_SINGLESEL);
-		SendMessage(*this, LVM_SETEXTENDEDLISTVIEWSTYLE, LVS_EX_FULLROWSELECT, LVS_EX_FULLROWSELECT);
-		lib::win::list::SetListFonts(*this, fontBody, fontHead);
-		
-		lib::win::list::AppendColumn(*this, "Date", 100);
-		lib::win::list::AppendColumn(*this, "Time", 60);
-		lib::win::list::AppendColumn(*this, "Title", 240);
-		lib::win::list::AppendColumn(*this, "Round", 40);
-	}
-	void AddTourney(const char * date, const char * time, const char * name, const char * round) {
-		int i = lib::win::list::AppendItem(*this);
-		lib::win::list::SetItemText(*this, i, 0, date);
-		lib::win::list::SetItemText(*this, i, 1, time);
-		lib::win::list::SetItemText(*this, i, 2, name);
-		lib::win::list::SetItemText(*this, i, 3, round);
-	}
-	void FitHeaderToClient() {
-		lib::win::list::GrowColumnToFit(*this, 2);
-		ShowScrollBar(*this, SB_HORZ, FALSE);
-	}
-};
-lib::win::WindowClass TourneyListView::wc("RELAY_TELEGRAPH_CLASS", MainPaneProc);
 
 LRESULT CALLBACK MainWindowProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 	enum {ID_NONE=1000,ID_RT,ID_TL};
 	static lib::win::WindowHandle rt;
-	static TourneyListView tl;
+	static app::win::TourneyListView tl;
 	
 	switch(m) {
 		case WM_CLOSE: DestroyWindow(h); return 0;
@@ -118,6 +86,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR args, int show)
 	
 	HICON icon = LoadIcon(instance, MAKEINTRESOURCE(ID_ICO_APPLICATION));
 	lib::win::WindowClass wcmw("MAIN_WINDOW_CLASS", MainWindowProc, NULL, icon);
+	lib::win::WindowClass wcrt("RELAY_TELEGRAPH_CLASS", MainPaneProc);
 	
 	lib::win::WindowHandle hwnd;
 	hwnd.Create(wcmw, "MainPaneClass Tester", WS_OVERLAPPEDWINDOW);
