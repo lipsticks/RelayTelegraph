@@ -10,6 +10,10 @@ The makefiles were written under the assumption of a working [MinGW](http://www.
 
 ### Updates
 
+#### 2013-02-26
+
+Taking a short hiatus. Been thinking about a couple of things: particularly about the simplest [method for correlating scheduled with relayed tourneys](docs/fuzzycomp.md) and about possible [issues with the polling of server data](docs/minipoll.md).
+
 #### 2013-02-23
 
 The plugin now shows the list of scheduled tournaments. The next step is to add a toolbar (and maybe a menu) that will let the user switch between a couple of lists:

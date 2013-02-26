@@ -21,13 +21,13 @@ Here are some observed examples *:
 
 *Note: It is dawning on me why a plugin like this hasn't already been written until now.*
 
-	S-type					|	R-type
-	------------------------+-------------------------------
-	Reykjavik Open          |   Reykjavik Open 2013
-	German Bundesliga       |   German Bundesliga
-	Karkonosze Open Group A |   6th Karkonosze Group A
-	Cen.Serbia Champ's Men  |   Central Serbia Championhips
-	Romania Champ's Women   |   Romania Champs
+	S-type                    |  R-type
+	--------------------------+-------------------------------
+	Reykjavik Open            |  Reykjavik Open 2013
+	German Bundesliga         |  German Bundesliga
+	Karkonosze Open Group A   |  6th Karkonosze Group A
+	Cen.Serbia Champ's Men    |  Central Serbia Championhips
+	Romania Champ's Women     |  Romania Champs
 
 *Note: At the same day was scheduled a 'Romania Champ's Men' tourney; they might have even been merged under the single '`Romania Champs`' title, I didn't check this then, but a custom like this would certainly make things more difficult correlation-wise.*
 
@@ -48,4 +48,6 @@ Given all this, it might be worth a shot to have the fuzzy comparator first try 
 
 *Note: A strict WIM will split both titles into word lists, then go through each word in the shorter list and check whether this word is present in the other list. A pWIM will do analogously but each time looking for the longest prefix match, and summing up their char counts.*
 
-A working mockup in executable pseudocode (i.e. python) should serve to [illustrate what I have in mind](pseudocode/wim.py).
+A working mockup in executable pseudocode (i.e. python) should serve to [illustrate what I have in mind](pseudocode/wim.py). Note that only the last approach (i.e. **order-independent word-wise prefix summing**) produces an accurate mapping for the current testing set of titles *. The algorithm is, however, neither efficient nor guaranteed to work for all expected cases.
+
+*Note: I will need to keep adding cases as they happen. Fortunately there will be lots of tournaments in the coming weeks.*

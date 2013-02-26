@@ -29,6 +29,14 @@ def strictMatch(a, b):
 	"""True if the two strings are identical."""
 	return a == b
 
+def sparseMatch(a, b):
+	"""True if the shorter string's words are included in the longer in
+		the same order (but possibly with extra characters in-between)."""
+	l, r = (a, b) if len(a) < len(b) else (b, a)
+	L = re.split(r"[^0-9A-Za-z]+", l)
+	l = ".*?" + ".*?".join(L) + ".*?"
+	return re.match(l, r, re.I)
+
 def getCommonPrefixLength(a, b):
 	"""Returns the number of left-most matching characters."""
 	assert len(a) > 0 or len(b) > 0, "two empty strings would match 100% but still return a zero weight"
@@ -97,6 +105,7 @@ def dump(S, R, mapping, name=None):
 if "__main__" == __name__:
 	_S, _R = adjustCaseForComparison(S, R, sensitive=False)
 	dump(S, R, run(_S, _R, independentLoop, strictMatch), "STRICT MATCHING (identity)")
+	dump(S, R, run(_S, _R, independentLoop, sparseMatch), "STRICT MATCHING (sparse)")
 	dump(S, R, run(_S, _R, weightedLoop, getCommonPrefixLength), "WEIGHTED MATCHING (full prefix)")
 	dump(S, R, run(_S, _R, weightedLoop, getWordSimilarityWeight), "WEIGHTED MATCHING (word prefix)")
 	
